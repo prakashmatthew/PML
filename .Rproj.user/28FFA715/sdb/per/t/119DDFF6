@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "<html>\n\n<head>\n<title>Title</title>\n</head>\n\n<body>\n\n\n<p> I started the analysis by using brute force not trying to understand the data first as it seemed too big. I tried different rpart and random forest models on the entire data,after <b>partitioning the train data set</b> which took hours to train on my dual core i5 laptop.<br> I then tried to make models for each <b>user_name</b> splitting the train data as per <b>user_name</b>. All these models failed to (1) train fast (2)predict for all test variables [always had missing values in the prediction, I still don't understand why] <br><b><u>Reducing number of Predictors </u></b><br> I started by eliminating predictors in the <b>train data set</b> which were highly correlated with each other and which had no values at all.I assigned a value of <b>0</b> to predictors where they had missing values and tried various randomforest and rpart models. Even these models had the 2 failures as before.<br><br><b><u>Breakthrough</b></u><br>Then it hit me to check the test data set for missing predictors as models based on train data set won't work on the actual test set if they don't even have those variables. So removing the predictors which had missing values in the test data set the number of predictors came down to 59 from 120. On this I made different models and the model using rf gave the best result and predicted all 20 test cases correctly :D<br><br><b><u>Key Codes</b></u><br><b>Cross Validation</b><br>\ntrain9 <- train8[,-59] #train dataset of with 58 predictors<br>\ntrain.label <- as.factor(train8$classe)<br>\n\ncv.3folds <- createMultiFolds(train.label, k = 3, times = 5)<br>\nctrl1 <- trainControl(method = \"repeatedcv\", number = 3, repeats = 5, index = cv.3folds)<br>\n\nlibrary(doSNOW) #for faster modelling<br>\ncl <- makeCluster(3, type = \"SOCK\")<br>\nregisterDoSNOW(cl)<br>\nm.rf.5 <- train( x = train9, y = train.label, method = \"rf\", trControl = ctrl1)<br>\n\nstopCluster(cl)<br>\n\ntest9 <- test8[,-59]<br>\nm.rf.5$finalModel<br>\n\n#Type of random forest: classification<br>\n#Number of trees: 500<br>\n#No. of variables tried at each split: 30<br>\n\n#OOB estimate of  error rate: 0.07%<br>\n#Confusion matrix:<br>\n#  A    B    C    D    E  class.error<br>\n#A 5580    0    0    0    0 0.0000000000<br>\n#B    1 3795    1    0    0 0.0005267316<br>\n#C    0    3 3418    1    0 0.0011689071<br>\n#D    0    0    4 3210    2 0.0018656716<br>\n#E    0    0    0    2 3605 0.0005544774<br><br>\n<b>OOB estimate of  error rate: 0.07%</b><br><br>\n\n<b><u>Final Model</b></u><br><br>\nm.rf.4 <- train(classe ~ . , method = \"rf\", data = train8)<br>\np.rf.4 <- predict(m.rf.4, test8)<br>\np.rf.4<br>\n\n#mtry  Accuracy   Kappa  <br>  \n#2    0.9905045  0.9879890<br>\n#41    0.9991620  0.9989403<br>\n#80    0.9983589  0.9979248<br>\n#Accuracy was used to select the optimal model using  the largest value.<br>\n#The final value used for the model was mtry = 41.<br>\n<br>\n#m.rf.4 has all the 20 test variables correctly predicted\n</p>\n</body>\n</html>\n",
+    "created" : 1513701135784.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "663369556",
+    "id" : "119DDFF6",
+    "lastKnownWriteTime" : 1513754710,
+    "last_content_update" : 1513754710552,
+    "path" : "C:/Users/hp laptop/Downloads/PML/PracticalMachineLearning_Submission.html",
+    "project_path" : "PracticalMachineLearning_Submission.html",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "html"
+}
